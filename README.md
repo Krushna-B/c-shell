@@ -21,16 +21,26 @@ A minimal Unix-like shell written in C. This project was built to understand cor
 - `gcc` or `clang`
 - `make`
 
-### Compile with Makefile
+### Compile and Run with Makefile
 
 ```
 make run
 ```
 
+### Compile and Run Manually
+
+```
+gcc -Wall -Wextra -O2 -o lsh src/main.c
+./lsh
+```
+
 ## Project Structure
 
+```
 .
 ├── src/
 │ └── main.c
 ├── Makefile
 └── README.md
+
+```
