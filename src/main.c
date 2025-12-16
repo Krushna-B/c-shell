@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define LSH_BUFFER 1024
+#define LSH_TOKEN_BUFF 64
+#define LSH_DELIM "\t\r\n\a"
 
 void lsh_loop();
 char *lsh_readline();
-char **lsh_split_line();
+char **lsh_split_line(char *line);
 int lsh_execute_line();
 
 int main(int argc, char **argv)
@@ -74,8 +77,40 @@ char *lsh_readline()
     }
 }
 
-char **lsh_split_line()
+// Parse line (tokenize) with whtie space as delimeter
+char **lsh_split_line(char *line)
 {
+    int capacity = LSH_TOKEN_BUFF;
+    int position = 0;
+    char **buffer = malloc(sizeof(char *) * LSH_TOKEN_BUFF);
+    char *token;
+    if (!buffer)
+    {
+        fprintf(stderr, "lsh: memory allocation error\n");
+        exit(EXIT_FAILURE);
+    }
+
+    token = strtok(line, LSH_DELIM);
+    while (token != NULL)
+    {
+        buffer[position] = token;
+        position++;
+
+        if (position >= buffer)
+        {
+            capacity *= 2;
+            char *tmp = realloc(buffer, capacity * sizeof(char *));
+            if (!tmp)
+            {
+                fprintf(stderr, "lsh: memory reallocation error\n");
+                exit(EXIT_FAILURE);
+            }
+            buffer = tmp;
+        }
+        token = strtok(NULL, LSH_DELIM);
+    }
+    buffer[position] = NULL;
+    return buffer;
 }
 
 int lsh_execute_line()
